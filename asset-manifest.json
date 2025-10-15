@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/timetable-generator/static/css/main.68649c88.css",
-    "main.js": "/timetable-generator/static/js/main.80e208d5.js",
+    "main.js": "/timetable-generator/static/js/main.03538a14.js",
     "static/js/453.91fa6e67.chunk.js": "/timetable-generator/static/js/453.91fa6e67.chunk.js",
     "index.html": "/timetable-generator/index.html",
     "main.68649c88.css.map": "/timetable-generator/static/css/main.68649c88.css.map",
-    "main.80e208d5.js.map": "/timetable-generator/static/js/main.80e208d5.js.map",
+    "main.03538a14.js.map": "/timetable-generator/static/js/main.03538a14.js.map",
     "453.91fa6e67.chunk.js.map": "/timetable-generator/static/js/453.91fa6e67.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.68649c88.css",
-    "static/js/main.80e208d5.js"
+    "static/js/main.03538a14.js"
   ]
 }
