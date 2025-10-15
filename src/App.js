@@ -1258,11 +1258,13 @@ const handleModalSubmit = () => {
                     {subjects.length === 0 && <p className="empty-text">No subjects configured yet</p>}
                   </div>
                 </div>
+                <div className="resource-section">
                 <div className="resource-header">
   <h3>Labs</h3>
   <button onClick={() => openModal('lab')} className="btn btn-small btn-warning">
     <Plus size={16} /> Add Lab
   </button>
+</div>
 </div>
 
 <div className="list-container">
