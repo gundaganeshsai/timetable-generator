@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, Users, BookOpen, Download, RefreshCw, Plus, Trash2, AlertCircle } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
 
 const TimetableGenerator = () => {
   const [step, setStep] = useState(1);
@@ -273,6 +276,69 @@ const handleModalSubmit = () => {
     
     return true;
   };
+
+  const handleExportExcel = () => {
+  if (!timetables || Object.keys(timetables).length === 0) {
+    alert('Please generate the timetable first.');
+    return;
+  }
+
+  const workbook = XLSX.utils.book_new();
+
+  const convertTimetableToSheet = (timetable, titleType) => {
+    const sheetData = [];
+
+    const headers = ['Day/Hour'];
+    for (let h = 1; h <= config.hoursPerDay; h++) headers.push(`Hour ${h}`);
+    sheetData.push(headers);
+
+    for (let d = 1; d <= config.days; d++) {
+      const row = [`Day ${d}`];
+      for (let h = 1; h <= config.hoursPerDay; h++) {
+        const cell = timetable[d]?.[h];
+        if (!cell) {
+          row.push('');
+          continue;
+        }
+
+        if (cell.type === 'break') row.push(`🧋 Break (${cell.name})`);
+        else if (cell.type === 'lab')
+          row.push(`${cell.subject} [Lab]\n${cell.faculty}\nRoom: ${cell.room}`);
+        else if (cell.type === 'class')
+          row.push(
+            titleType === 'faculty'
+              ? `${cell.subject}\n(${cell.section || cell.sections})`
+              : `${cell.subject}\n(${cell.faculty})`
+          );
+        else row.push('');
+      }
+      sheetData.push(row);
+    }
+
+    return XLSX.utils.aoa_to_sheet(sheetData);
+  };
+
+  // Add each section timetable
+  Object.keys(timetables).forEach(sectionName => {
+    const worksheet = convertTimetableToSheet(timetables[sectionName], 'section');
+    XLSX.utils.book_append_sheet(workbook, worksheet, sectionName.slice(0, 30));
+  });
+
+  // Add each faculty timetable
+  if (facultyTimetables) {
+    Object.keys(facultyTimetables).forEach(facultyName => {
+      const worksheet = convertTimetableToSheet(facultyTimetables[facultyName], 'faculty');
+      XLSX.utils.book_append_sheet(workbook, worksheet, facultyName.slice(0, 30));
+    });
+  }
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  saveAs(blob, 'Generated_Timetable.xlsx');
+};
+
 
   // Generate Timetable
   // const generateTimetable = () => {
@@ -1356,9 +1422,9 @@ const handleModalSubmit = () => {
                   <button onClick={generateTimetable} className="btn btn-primary">
                     <RefreshCw size={20} /> Regenerate
                   </button>
-                  <button onClick={() => window.print()} className="btn btn-success">
-                    <Download size={20} /> Print/Export
-                  </button>
+  <button onClick={handleExportExcel} className="btn btn-success">
+    <Download size={20} /> Export Excel
+  </button>
                 </div>
               </div>
             )}
